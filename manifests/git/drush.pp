@@ -5,9 +5,7 @@ class drush::git::drush (
   $update     = false
   ) inherits drush::defaults {
 
-  if !defined(Package['git']) and !defined(Package['git-core']) {
-    package { 'git': ensure => present }
-  }
+  ensure_packages(['git'])
 
   if !defined(Package['php5-cli']) {
     package { 'php5-cli': ensure => present }
