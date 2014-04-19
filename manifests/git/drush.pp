@@ -4,9 +4,16 @@ class drush::git::drush (
   $git_repo   = 'https://github.com/drush-ops/drush.git',
   $update     = false
   ) inherits drush::defaults {
+  
+  if $php_prefix == undef {
+    $php_prefix = $::operatingsystem ? {
+      /(?i:Ubuntu|Debian|Mint|SLES|OpenSuSE)/ => 'php5-',
+      default                                 => 'php-',
+    }
+  }
 
-  if !defined(Package['php5-cli']) {
-    package { 'php5-cli': ensure => present }
+  if !defined(Package["${php_prefix}cli"]) {
+    package { "${php_prefix}cli": ensure => present }
   }
 
   drush::git { $git_repo :
@@ -41,7 +48,7 @@ class drush::git::drush (
     refreshonly => true,
     require     => [
       File['symlink drush'],
-      Package['php5-cli'],
+      Package["${php_prefix}cli"],
     ],
   }
 
